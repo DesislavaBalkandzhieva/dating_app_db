@@ -205,3 +205,30 @@ join person_date
 on person.id= person_date.id_person
 join date
 on date.id= person_date.id_date;
+
+
+-- select ззаявка извеждаща само мъже и датата на тяхния unsuccessful_match
+use dating_app;
+select person.first_name, unsuccessful_match.unmatch_date
+from person join unsucsessful_match_person
+on person.id= unsucsessful_match_person.id_person
+join unsuccessful_match
+on unsuccessful_match.id= unsucsessful_match_person.id_unsuccessful_match
+where person.gender='male';
+
+
+SELECT person.id, person.first_name, person.last_name, image.imgURL
+FROM person
+INNER JOIN image ON person.id = image.id_person;
+
+
+
+
+SELECT wg.id, w.date, w.place, p.id, p.first_name, p.last_name, i.imgURL
+FROM wedding_guest wg
+LEFT OUTER JOIN wedding w 
+ON wg.wedding_id = w.id
+LEFT OUTER JOIN person p 
+ON wg.guest_id = p.id
+LEFT OUTER JOIN image i 
+ON p.id = i.id_person;
