@@ -1,0 +1,207 @@
+DROP DATABASE IF EXISTS dating_app;
+CREATE DATABASE dating_app;
+USE dating_app;
+
+create table role(
+id int not null primary key, 
+name enum ('admin', 'user')
+);
+
+create table user(
+id int not null primary key, 
+role_id int not null,
+user_name varchar(255) not null,
+password varchar (255),
+phone varchar(255),
+email varchar (255),
+constraint foreign key(role_id)
+	references role(id)
+    );
+
+create table person(
+id int not null primary key,
+gender enum ('male', 'female', 'other') not null,
+first_name varchar(255) not null,
+middle_name varchar(255), 
+last_name varchar(255) not null,
+status boolean not null,
+eye_color enum('brown', 'blue', 'black', 'hazel', 'green'), 
+hair_color varchar(255), 
+skin_color enum ('dark', 'brown', 'medium', 'light', 'very light'), 
+weight double , 
+height int,  
+education varchar(255), 
+profession varchar(255),
+interests varchar(255), 
+sexual_orientation enum ('male', 'female', 'both'),
+registration_date date not null, 
+birth_year year not null, 
+role_id int not null,
+constraint foreign key(role_id)
+	references role(id)
+); 
+create table image (
+id int not null primary key,
+imgURL varchar(255),
+id_person int not null, 
+constraint foreign key (id_person)
+	references person(id)
+);
+create table successful_match(
+id int auto_increment primary key,
+match_date date
+);
+create table sucsessful_match_person(
+id_person int not null, 
+constraint foreign key (id_person)
+	references person(id),
+id_successful_match int not null, 
+constraint foreign key (id_successful_match)
+	references successful_match(id)
+);
+
+create table unsuccessful_match(
+id int auto_increment primary key,
+unmatch_date date
+);
+create table unsucsessful_match_person(
+id_person int not null, 
+constraint foreign key (id_person)
+	references person(id),
+id_unsuccessful_match int not null, 
+constraint foreign key (id_unsuccessful_match)
+	references unsuccessful_match(id)
+);
+
+create table date(
+id int not null primary key,
+date date ,
+place varchar(255),
+time double, 
+met_again boolean
+);
+
+create table person_date(
+id_date int not null, 
+constraint foreign key (id_date)
+	references date(id), 
+id_person int not null, 
+constraint foreign key (id_person)
+	references person(id)
+);
+
+create table wedding (
+id int not null primary key, 
+date date, 
+place varchar(255), 
+id_person1 int not null, 
+constraint foreign key (id_person1)
+	references person(id), 
+id_person2 int not null, 
+constraint foreign key (id_person2)
+	references person(id)
+    );
+
+CREATE TABLE wedding_guest (
+id int(11) not null primary key,
+wedding_id int(11) not null,
+guest_id int(11) not null,
+constraint foreign key (wedding_id) 
+	references wedding (id),
+constraint foreign key (guest_id) 
+	references person (id)
+);
+
+
+
+INSERT INTO role (id, name)
+VALUES
+(1, 'admin'),
+(2, 'user');
+
+INSERT INTO user (id, role_id, user_name, password, phone, email)
+VALUES
+(1, 1, 'admin', 'admin123', '123456789', 'admin@datingapp.com'),
+(2, 2, 'user1', 'password1', '123456789', 'user1@datingapp.com'),
+(3, 2, 'user2', 'password2', '987654321', 'user2@datingapp.com');
+
+INSERT INTO person (
+id, gender, first_name, middle_name, last_name, status, eye_color, hair_color,
+skin_color, weight, height, education, profession, interests, sexual_orientation,
+registration_date, birth_year, role_id
+)
+VALUES
+(1, 'male', 'Ivan', 'Dimitrov', 'Petrov', true, 'hazel', 'black', 'medium', 70, 175, 'Bachelor of Science', 
+'Software Engineer', 'Reading, Hiking, Traveling', 'female', '2022-01-01', 1995, 2),
+(2, 'female', 'Yana', 'Marinova', 'Dimitrova', true, 'brown', 'blonde', 'light', 60, 165, 'Bachelor of Arts', 
+'Marketing Specialist', 'Cooking, Photography, Yoga', 'male', '2022-02-15', 1990, 2),
+(3, 'male', 'Boris', 'Ivanov', 'Samuilov', true, 'blue', 'brown', 'very light', 80, 180, 'Master of Business Administration', 
+'Entrepreneur', 'Traveling, Reading, Basketball', 'both', '2022-03-10', 1985, 2),
+(4, 'other', 'Alexander', 'Filipov', 'Petrov', true, 'green', 'black', 'brown', 70, 170, 
+'Doctor of Veterinary Medicine', 'Veterinarian', 'Swimming, Painting, Writing', 'male', '2022-04-20', 1998, 2);
+
+INSERT INTO image (id, imgURL, id_person)
+VALUES
+(1, 'https://example.com/img1.jpg', 1),
+(2, 'https://example.com/img2.jpg', 1),
+(3, 'https://example.com/img3.jpg', 2),
+(4, 'https://example.com/img4.jpg', 3),
+(5, 'https://example.com/img5.jpg', 4);
+
+INSERT INTO successful_match (match_date)
+VALUES
+('2022-06-15'),
+('2022-08-20'),
+('2022-10-05');
+
+INSERT INTO sucsessful_match_person (id_person, id_successful_match)
+VALUES
+(1, 1),
+(2, 1),
+(3, 2),
+(4, 3);
+
+INSERT INTO unsuccessful_match (unmatch_date)
+VALUES
+('2022-07-01'),
+('2022-09-01'),
+('2022-11-01');
+
+INSERT INTO unsucsessful_match_person (id_person, id_unsuccessful_match)
+VALUES
+(1, 1),
+(3, 1),
+(2, 2),
+(4, 3);
+
+INSERT INTO date (id, date, place, time, met_again)
+VALUES (1, '2022-03-01', 'Happy resturant', 14.5, true),
+       (2, '2022-04-01', 'NDK park', 19.0, false);
+
+INSERT INTO person_date (id_date, id_person)
+VALUES (1, 1),
+       (1, 2),
+       (2, 1),
+       (2, 2);
+
+INSERT INTO wedding (id, date, place, id_person1, id_person2)
+VALUES (1, '2023-06-10', 'The Plaza Hotel', 1, 2),
+       (2, '2024-07-20', 'The Pirin Hotel', 2, 1);
+
+INSERT INTO wedding_guest (id, wedding_id, guest_id)
+VALUES (1, 1, 2),
+       (2, 1, 3),
+       (3, 2, 1),
+       (4, 2, 3);
+       
+-- select заявка извеждаща хора, които имат successful match и са отишли на среща
+use dating_app;
+select person.first_name
+from person join sucsessful_match_person
+on person.id= sucsessful_match_person.id_person
+join  successful_match
+on successful_match.id= sucsessful_match_person.id_successful_match
+join person_date
+on person.id= person_date.id_person
+join date
+on date.id= person_date.id_date;
